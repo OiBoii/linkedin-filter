@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>inRole</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="panel">
+      <header class="hero">
+        <div>
+          <h1>inRole</h1>
+          <p>
+            All filters apply immediately except URL time, which uses Apply.
+          </p>
+        </div>
+        <label class="switch" for="enableFiltering" title="Enable all filters">
+          <input type="checkbox" id="enableFiltering" />
+          <span class="slider"></span>
+        </label>
+      </header>
+
+      <section
+        class="card card-include"
+        id="includeSection"
+        data-gate="titleIncludeEnabled"
+      >
+        <div class="section-head">
+          <div class="title-help">
+            <h2>Target Roles (OR)</h2>
+            <button
+              class="help-tip-btn"
+              type="button"
+              data-help-id="help-include"
+              aria-expanded="false"
+              aria-controls="help-include"
+            >
+              ?
+            </button>
+          </div>
+          <label class="switch switch-sm" title="Enable include rules">
+            <input type="checkbox" id="titleIncludeEnabled" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="card-body">
+          <p id="help-include" class="help-inline">
+            A job title must match at least one enabled phrase in this list.
+          </p>
+          <div class="input-row">
+            <input
+              id="titleIncludeInput"
+              type="text"
+              placeholder="ux designer"
+            />
+            <button
+              id="addTitleIncludeBtn"
+              type="button"
+              class="ghost icon-btn"
+              aria-label="Add include keyword"
+            >
+              +
+            </button>
+          </div>
+          <div id="titleIncludeList" class="token-list"></div>
+        </div>
+      </section>
+
+      <section
+        class="card card-exclude"
+        id="excludeSection"
+        data-gate="titleExcludeEnabled"
+      >
+        <div class="section-head">
+          <div class="title-help">
+            <h2>Role Exclusions</h2>
+            <button
+              class="help-tip-btn"
+              type="button"
+              data-help-id="help-exclude"
+              aria-expanded="false"
+              aria-controls="help-exclude"
+            >
+              ?
+            </button>
+          </div>
+          <label class="switch switch-sm" title="Enable exclude rules">
+            <input type="checkbox" id="titleExcludeEnabled" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="card-body">
+          <p id="help-exclude" class="help-inline">
+            Any matching phrase here filters the job out. Exclusions take
+            priority over includes.
+          </p>
+          <div class="input-row">
+            <input
+              id="titleExcludeInput"
+              type="text"
+              placeholder="Senior, Sr, Senior AI Engineer"
+            />
+            <button
+              id="addTitleExcludeBtn"
+              type="button"
+              class="ghost icon-btn"
+              aria-label="Add exclude keyword"
+            >
+              +
+            </button>
+          </div>
+          <div id="titleExcludeList" class="token-list"></div>
+          <div id="titleConflictWarning" class="inline-warning" hidden></div>
+        </div>
+      </section>
+
+      <section
+        class="card card-company"
+        id="companySection"
+        data-gate="blockedCompaniesEnabled"
+      >
+        <div class="section-head">
+          <div class="title-help">
+            <h2>Company Exclusions</h2>
+            <button
+              class="help-tip-btn"
+              type="button"
+              data-help-id="help-company"
+              aria-expanded="false"
+              aria-controls="help-company"
+            >
+              ?
+            </button>
+          </div>
+          <label class="switch switch-sm" title="Enable company rules">
+            <input type="checkbox" id="blockedCompaniesEnabled" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="card-body">
+          <p id="help-company" class="help-inline">
+            Partial, case-insensitive company matching.
+          </p>
+          <div class="input-row">
+            <input
+              id="blockedCompanyInput"
+              type="text"
+              placeholder="Jobgether"
+            />
+            <button
+              id="addBlockedCompanyBtn"
+              type="button"
+              class="ghost icon-btn"
+              aria-label="Add blocked company"
+            >
+              +
+            </button>
+          </div>
+          <div id="blockedCompaniesList" class="token-list"></div>
+        </div>
+      </section>
+
+      <section
+        class="card card-labels"
+        id="labelsSection"
+        data-gate="labelFiltersEnabled"
+      >
+        <div class="section-head">
+          <div class="title-help">
+            <h2>High-Strictness Label Filters</h2>
+            <button
+              class="help-tip-btn"
+              type="button"
+              data-help-id="help-labels"
+              aria-expanded="false"
+              aria-controls="help-labels"
+            >
+              ?
+            </button>
+          </div>
+          <label class="switch switch-sm" title="Enable label rules">
+            <input type="checkbox" id="labelFiltersEnabled" />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="card-body">
+          <p id="help-labels" class="help-inline">
+            These are strict tile-label rules and are combined together (AND).
+            They can reduce results to very few jobs.
+          </p>
+          <div class="toggle-grid">
+            <div class="toggle-row compact-row">
+              <span>Hide jobs marked “Promoted”</span
+              ><label class="switch switch-sm"
+                ><input type="checkbox" id="hidePromoted" /><span
+                  class="slider"
+                ></span
+              ></label>
+            </div>
+            <div class="toggle-row compact-row">
+              <span>Only show “Early applicant” jobs</span
+              ><label class="switch switch-sm"
+                ><input type="checkbox" id="requireEarlyApplicant" /><span
+                  class="slider"
+                ></span
+              ></label>
+            </div>
+            <div class="toggle-row compact-row">
+              <span>Only show “Actively reviewing applicants” jobs</span
+              ><label class="switch switch-sm"
+                ><input type="checkbox" id="requireActivelyReviewing" /><span
+                  class="slider"
+                ></span
+              ></label>
+            </div>
+            <div class="toggle-row compact-row">
+              <span>Only show “works/work here” jobs</span
+              ><label class="switch switch-sm"
+                ><input type="checkbox" id="hideWorksHere" /><span
+                  class="slider"
+                ></span
+              ></label>
+            </div>
+          </div>
+          <div id="labelStrictnessWarning" class="inline-warning" hidden></div>
+        </div>
+      </section>
+
+      <section class="card card-display">
+        <div class="section-head">
+          <div class="title-help">
+            <h2>Filtered Jobs Display</h2>
+            <button
+              class="help-tip-btn"
+              type="button"
+              data-help-id="help-display"
+              aria-expanded="false"
+              aria-controls="help-display"
+            >
+              ?
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <p id="help-display" class="help-inline">
+            Choose whether filtered jobs are fully hidden or kept visible but
+            dimmed.
+          </p>
+          <div
+            class="radio-group"
+            role="radiogroup"
+            aria-label="Filtered jobs display mode"
+          >
+            <label class="radio-row"
+              ><input
+                type="radio"
+                name="filterMode"
+                id="displayHide"
+                value="hide"
+              /><span>Hide filtered jobs</span></label
+            >
+            <label class="radio-row"
+              ><input
+                type="radio"
+                name="filterMode"
+                id="displayDim"
+                value="dim"
+              /><span>Dim filtered jobs</span></label
+            >
+          </div>
+        </div>
+      </section>
+
+      <section class="card card-time">
+        <div class="section-head">
+          <div class="title-help">
+            <h2>Posted Time URL</h2>
+            <button
+              class="help-tip-btn"
+              type="button"
+              data-help-id="help-time"
+              aria-expanded="false"
+              aria-controls="help-time"
+            >
+              ?
+            </button>
+          </div>
+        </div>
+        <p id="help-time" class="help-inline">
+          Sets the LinkedIn URL time filter. 1 means last 1 hour, 24 means last
+          24 hours.
+        </p>
+        <label class="field-label" for="maxPostedHours"
+          >Only show listings posted in the past</label
+        >
+        <div class="input-row time-row">
+          <input
+            id="maxPostedHours"
+            type="number"
+            min="1"
+            step="1"
+            placeholder="12"
+          />
+          <span class="unit-pill">hours</span>
+          <button id="applyPostedHoursNowBtn" type="button">
+            Apply URL time
+          </button>
+        </div>
+        <div class="preset-row">
+          <button type="button" class="ghost preset-btn" data-hours="1">
+            1h
+          </button>
+          <button type="button" class="ghost preset-btn" data-hours="24">
+            24h
+          </button>
+          <button type="button" class="ghost preset-btn" data-hours="72">
+            72h
+          </button>
+        </div>
+      </section>
+
+      <footer class="footer-actions">
+        <button id="resetBtn" type="button" class="ghost">
+          Restore Defaults
+        </button>
+      </footer>
+    </main>
+
+    <div id="resetModal" class="modal-backdrop" aria-hidden="true">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="resetModalTitle"
+      >
+        <h3 id="resetModalTitle">Restore default filters?</h3>
+        <p>This will replace your current filter setup with defaults.</p>
+        <div class="modal-actions">
+          <button id="cancelResetBtn" type="button" class="ghost">
+            Cancel
+          </button>
+          <button id="confirmResetBtn" type="button">Restore</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="shared/constants.js"></script>
+    <script src="shared/storage.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "inRole",
+  "version": "1.0.0",
+  "description": "Smart LinkedIn jobs filtering for title, company, labels, and posted time.",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["https://www.linkedin.com/*"],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/*"],
+      "js": [
+        "src/shared/constants.js",
+        "src/shared/parsers.js",
+        "src/shared/storage.js",
+        "src/content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "inRole",
+    "default_popup": "src/popup.html"
+  },
+  "icons": {
+    "16": "assets/icon-16.png",
+    "32": "assets/icon-32.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  }
+}
