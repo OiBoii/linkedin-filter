@@ -9,17 +9,20 @@
     titleIncludeInput: document.getElementById("titleIncludeInput"),
     addTitleIncludeBtn: document.getElementById("addTitleIncludeBtn"),
     titleIncludeList: document.getElementById("titleIncludeList"),
+    titleIncludeMaster: document.getElementById("titleIncludeMaster"),
 
     titleExcludeEnabled: document.getElementById("titleExcludeEnabled"),
     titleExcludeInput: document.getElementById("titleExcludeInput"),
     addTitleExcludeBtn: document.getElementById("addTitleExcludeBtn"),
     titleExcludeList: document.getElementById("titleExcludeList"),
+    titleExcludeMaster: document.getElementById("titleExcludeMaster"),
     titleConflictWarning: document.getElementById("titleConflictWarning"),
 
     blockedCompaniesEnabled: document.getElementById("blockedCompaniesEnabled"),
     blockedCompanyInput: document.getElementById("blockedCompanyInput"),
     addBlockedCompanyBtn: document.getElementById("addBlockedCompanyBtn"),
     blockedCompaniesList: document.getElementById("blockedCompaniesList"),
+    blockedCompaniesMaster: document.getElementById("blockedCompaniesMaster"),
 
     labelFiltersEnabled: document.getElementById("labelFiltersEnabled"),
     requireEarlyApplicant: document.getElementById("requireEarlyApplicant"),
@@ -141,6 +144,22 @@
       .map((item) => normalizeToken(item.value));
   }
 
+  function syncMasterCheckbox(master, list) {
+    if (!master) {
+      return;
+    }
+    const total = list.length;
+    const enabledCount = list.filter((item) => item && item.enabled !== false).length;
+    master.indeterminate = total > 0 && enabledCount > 0 && enabledCount < total;
+    master.checked = total > 0 && enabledCount === total;
+  }
+
+  function syncMasterCheckboxes() {
+    syncMasterCheckbox(elements.titleIncludeMaster, titleIncludeKeywords);
+    syncMasterCheckbox(elements.titleExcludeMaster, titleExcludeKeywords);
+    syncMasterCheckbox(elements.blockedCompaniesMaster, blockedCompanies);
+  }
+
   function updateConflictWarnings() {
     const includeEnabled = elements.titleIncludeEnabled.checked;
     const excludeEnabled = elements.titleExcludeEnabled.checked;
@@ -166,6 +185,13 @@
           }
         });
       });
+    }
+
+    if (includeEnabled && titleIncludeKeywords.length && include.length === 0) {
+      warnings.push("Include rules are enabled but all include keywords are unchecked.");
+    }
+    if (excludeEnabled && titleExcludeKeywords.length && exclude.length === 0) {
+      warnings.push("Exclude rules are enabled but all exclude keywords are unchecked.");
     }
 
     const deduped = [...new Set(warnings)].slice(0, 4);
@@ -202,6 +228,7 @@
     renderTokenList(elements.titleIncludeList, titleIncludeKeywords, "No include role keywords yet.", "include");
     renderTokenList(elements.titleExcludeList, titleExcludeKeywords, "No excluded role keywords yet.", "exclude");
     renderTokenList(elements.blockedCompaniesList, blockedCompanies, "No excluded companies yet.", "company");
+    syncMasterCheckboxes();
     updateConflictWarnings();
   }
 
@@ -284,12 +311,15 @@
       elements.titleIncludeEnabled,
       elements.titleIncludeInput,
       elements.addTitleIncludeBtn,
+      elements.titleIncludeMaster,
       elements.titleExcludeEnabled,
       elements.titleExcludeInput,
       elements.addTitleExcludeBtn,
+      elements.titleExcludeMaster,
       elements.blockedCompaniesEnabled,
       elements.blockedCompanyInput,
       elements.addBlockedCompanyBtn,
+      elements.blockedCompaniesMaster,
       elements.labelFiltersEnabled,
       elements.requireEarlyApplicant,
       elements.requireActivelyReviewing,
@@ -332,6 +362,17 @@
       return blockedCompanies;
     }
     return null;
+  }
+
+  async function toggleAllInList(list, checked) {
+    if (!Array.isArray(list) || !list.length) {
+      return;
+    }
+    for (let i = 0; i < list.length; i += 1) {
+      list[i] = Object.assign({}, list[i], { enabled: checked });
+    }
+    renderAllLists();
+    await applySettings();
   }
 
   function getActiveTab() {
@@ -515,6 +556,22 @@
     wireListContainer(elements.titleIncludeList);
     wireListContainer(elements.titleExcludeList);
     wireListContainer(elements.blockedCompaniesList);
+
+    if (elements.titleIncludeMaster) {
+      elements.titleIncludeMaster.addEventListener("change", async () => {
+        await toggleAllInList(titleIncludeKeywords, elements.titleIncludeMaster.checked);
+      });
+    }
+    if (elements.titleExcludeMaster) {
+      elements.titleExcludeMaster.addEventListener("change", async () => {
+        await toggleAllInList(titleExcludeKeywords, elements.titleExcludeMaster.checked);
+      });
+    }
+    if (elements.blockedCompaniesMaster) {
+      elements.blockedCompaniesMaster.addEventListener("change", async () => {
+        await toggleAllInList(blockedCompanies, elements.blockedCompaniesMaster.checked);
+      });
+    }
 
     document.querySelectorAll(".help-tip-btn").forEach((button) => {
       button.addEventListener("click", () => {

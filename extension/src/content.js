@@ -14,6 +14,9 @@
   let settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
   let observer = null;
   let scanTimer = null;
+  let isApplyingCardState = false;
+  let isScanning = false;
+  let pendingScanReason = null;
   let latestHref = location.href;
   let latestStats = {
     processed: 0,
@@ -25,9 +28,13 @@
 
   const CARD_ROOT_SELECTORS = [
     "li.jobs-search-results__list-item",
+    "li[data-occludable-job-id]",
+    "li[data-job-id]",
+    "article[data-job-id]",
     "div[data-job-id]",
     "div[data-occludable-job-id]",
-    ".job-card-container"
+    ".job-card-container",
+    ".job-card-list__entity-lockup"
   ];
 
   const TITLE_SELECTORS = [
@@ -64,7 +71,7 @@
     if (!(node instanceof HTMLElement)) {
       return null;
     }
-    return node.closest("li.jobs-search-results__list-item, div[data-job-id], div[data-occludable-job-id], .job-card-container");
+    return node.closest("li.jobs-search-results__list-item, li[data-occludable-job-id], li[data-job-id], article[data-job-id], div[data-job-id], div[data-occludable-job-id], .job-card-container, .job-card-list__entity-lockup");
   }
 
   function getCardIdentity(card) {
@@ -382,45 +389,9 @@
       .linkedin-filter-hidden {
         display: none !important;
       }
-      .linkedin-filter-badge {
-        display: inline-block;
-        margin-left: 6px;
-        padding: 2px 6px;
-        font-size: 10px;
-        line-height: 1.4;
-        border-radius: 999px;
-        background: #f3f6f8;
-        color: #5e6a73;
-        border: 1px solid #d8dfe3;
-        vertical-align: middle;
-      }
     `;
 
     document.documentElement.appendChild(style);
-  }
-
-  function addFilteredBadge(card) {
-    let badge = card.querySelector(".linkedin-filter-badge");
-    if (badge) {
-      return;
-    }
-
-    const anchor = card.querySelector("a.job-card-list__title, a.job-card-container__link, a[href*='/jobs/view/']");
-    if (!(anchor instanceof HTMLElement)) {
-      return;
-    }
-
-    badge = document.createElement("span");
-    badge.className = "linkedin-filter-badge";
-    badge.textContent = "Filtered";
-    anchor.insertAdjacentElement("afterend", badge);
-  }
-
-  function removeFilteredBadge(card) {
-    const badge = card.querySelector(".linkedin-filter-badge");
-    if (badge) {
-      badge.remove();
-    }
   }
 
   function applyCardState(card, passFilters) {
@@ -434,7 +405,6 @@
     if (listItem) {
       listItem.classList.remove("linkedin-filter-hidden");
     }
-    removeFilteredBadge(card);
 
     if (passFilters || !settings.enableFiltering) {
       card.style.display = card.dataset.linkedinFilterOriginalDisplay || "";
@@ -444,7 +414,6 @@
     if (settings.filterMode === "dim") {
       card.style.display = card.dataset.linkedinFilterOriginalDisplay || "";
       card.classList.add("linkedin-filter-dimmed");
-      addFilteredBadge(card);
       return;
     }
 
@@ -504,6 +473,12 @@
   }
 
   function performScan(scanReason, captureDetails) {
+    if (isScanning && !captureDetails) {
+      pendingScanReason = scanReason || "queued";
+      return;
+    }
+
+    isScanning = true;
     try {
       ensureStyles();
       const cards = getCardsForScan(getCandidateCards());
@@ -513,38 +488,42 @@
       const shouldCaptureDetails = Boolean(captureDetails) || Boolean(settings.debugMode);
       const debugCards = shouldCaptureDetails ? [] : null;
 
-      cards.forEach((card) => {
-        const parsed = parseCard(card);
-        const evaluation = evaluateFilters(parsed);
-        const passFilters = evaluation.pass;
+      isApplyingCardState = true;
+      try {
+        cards.forEach((card) => {
+          const parsed = parseCard(card);
+          const evaluation = evaluateFilters(parsed);
+          const passFilters = evaluation.pass;
 
-        if (!passFilters) {
-          filtered += 1;
-          if (settings.filterMode === "hide") {
-            hidden += 1;
+          if (!passFilters) {
+            filtered += 1;
+            if (settings.filterMode === "hide") {
+              hidden += 1;
+            }
           }
 
-        }
+          applyCardState(card, passFilters);
+          card.dataset.linkedinFilterFiltered = passFilters ? "0" : "1";
 
-        applyCardState(card, passFilters);
-        card.dataset.linkedinFilterFiltered = passFilters ? "0" : "1";
-
-        if (shouldCaptureDetails) {
-          const action = passFilters ? "show" : (settings.filterMode === "hide" ? "hide" : "dim");
-          debugCards.push({
-            title: parsed.title || "",
-            company: parsed.company || "",
-            pass: passFilters,
-            action,
-            reasons: evaluation.reasons,
-            matched: evaluation.matched,
-            hasEarlyApplicant: parsed.hasEarlyApplicant,
-            hasActivelyReviewing: parsed.hasActivelyReviewing,
-            hasPromoted: parsed.hasPromoted,
-            hasWorksHere: parsed.hasWorksHere
-          });
-        }
-      });
+          if (shouldCaptureDetails) {
+            const action = passFilters ? "show" : (settings.filterMode === "hide" ? "hide" : "dim");
+            debugCards.push({
+              title: parsed.title || "",
+              company: parsed.company || "",
+              pass: passFilters,
+              action,
+              reasons: evaluation.reasons,
+              matched: evaluation.matched,
+              hasEarlyApplicant: parsed.hasEarlyApplicant,
+              hasActivelyReviewing: parsed.hasActivelyReviewing,
+              hasPromoted: parsed.hasPromoted,
+              hasWorksHere: parsed.hasWorksHere
+            });
+          }
+        });
+      } finally {
+        isApplyingCardState = false;
+      }
 
       latestStats = {
         processed: cards.length,
@@ -566,18 +545,35 @@
       }
     } catch (error) {
       console.error("[LinkedInFilter] scan failure", error);
+    } finally {
+      isScanning = false;
+      if (pendingScanReason && !captureDetails) {
+        const nextReason = pendingScanReason;
+        pendingScanReason = null;
+        scheduleScan(nextReason, false);
+      }
     }
   }
 
-  function scheduleScan(reason) {
+  function scheduleScan(reason, immediate) {
+    pendingScanReason = reason || "scheduled";
     if (scanTimer) {
       clearTimeout(scanTimer);
     }
 
-    scanTimer = setTimeout(() => {
-      performScan(reason, false);
+    const run = () => {
+      const nextReason = pendingScanReason || reason || "scheduled";
+      pendingScanReason = null;
+      performScan(nextReason, false);
       scanTimer = null;
-    }, 250);
+    };
+
+    if (immediate) {
+      run();
+      return;
+    }
+
+    scanTimer = setTimeout(run, 140);
   }
 
   function startObserver() {
@@ -586,8 +582,11 @@
     }
 
     observer = new MutationObserver((mutations) => {
+      if (isApplyingCardState) {
+        return;
+      }
       if (mutations.some((m) => m.type === "childList")) {
-        scheduleScan("mutation");
+        scheduleScan("mutation", false);
       }
     });
 
@@ -602,7 +601,7 @@
     setInterval(() => {
       if (location.href !== latestHref) {
         latestHref = location.href;
-        scheduleScan("url-change");
+        scheduleScan("url-change", true);
       }
     }, 1000);
   }
@@ -613,7 +612,7 @@
       if (applyPostedHoursUrlFilter(false, false)) {
         return;
       }
-      scheduleScan("settings-refresh");
+      scheduleScan("settings-refresh", true);
     } catch (error) {
       settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
       console.warn("[LinkedInFilter] Failed to refresh settings", error);
@@ -629,7 +628,7 @@
     if (applyPostedHoursUrlFilter(false, false)) {
       return;
     }
-    scheduleScan("storage-change");
+    scheduleScan("storage-change", true);
   });
 
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
@@ -644,7 +643,7 @@
           sendResponse({ ok: true });
           return;
         }
-        scheduleScan("settings-message");
+        scheduleScan("settings-message", true);
         sendResponse({ ok: true });
         return;
       }
@@ -655,14 +654,14 @@
     if (message.type === MESSAGE_TYPES.APPLY_POSTED_HOURS_URL) {
       const changed = applyPostedHoursUrlFilter(Boolean(message.force), Boolean(message.manual));
       if (!changed) {
-        scheduleScan("apply-posted-hours-noop");
+        scheduleScan("apply-posted-hours-noop", true);
       }
       sendResponse({ ok: true, changed });
       return;
     }
 
     if (message.type === MESSAGE_TYPES.RESCAN) {
-      scheduleScan("manual-rescan");
+      scheduleScan("manual-rescan", true);
       sendResponse({ ok: true });
       return;
     }
@@ -698,7 +697,7 @@
     await refreshSettings();
     startObserver();
     watchUrlChanges();
-    scheduleScan("init");
+    scheduleScan("init", true);
   }
 
   init().catch((error) => {
