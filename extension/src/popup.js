@@ -3,44 +3,44 @@
   const { MESSAGE_TYPES } = shared;
 
   const elements = {
-    enableFiltering: document.getElementById("enableFiltering"),
+    enableFiltering: document.getElementById('enableFiltering'),
 
-    titleIncludeEnabled: document.getElementById("titleIncludeEnabled"),
-    titleIncludeInput: document.getElementById("titleIncludeInput"),
-    addTitleIncludeBtn: document.getElementById("addTitleIncludeBtn"),
-    titleIncludeList: document.getElementById("titleIncludeList"),
-    titleIncludeMaster: document.getElementById("titleIncludeMaster"),
+    titleIncludeEnabled: document.getElementById('titleIncludeEnabled'),
+    titleIncludeInput: document.getElementById('titleIncludeInput'),
+    addTitleIncludeBtn: document.getElementById('addTitleIncludeBtn'),
+    titleIncludeList: document.getElementById('titleIncludeList'),
+    titleIncludeMaster: document.getElementById('titleIncludeMaster'),
 
-    titleExcludeEnabled: document.getElementById("titleExcludeEnabled"),
-    titleExcludeInput: document.getElementById("titleExcludeInput"),
-    addTitleExcludeBtn: document.getElementById("addTitleExcludeBtn"),
-    titleExcludeList: document.getElementById("titleExcludeList"),
-    titleExcludeMaster: document.getElementById("titleExcludeMaster"),
-    titleConflictWarning: document.getElementById("titleConflictWarning"),
+    titleExcludeEnabled: document.getElementById('titleExcludeEnabled'),
+    titleExcludeInput: document.getElementById('titleExcludeInput'),
+    addTitleExcludeBtn: document.getElementById('addTitleExcludeBtn'),
+    titleExcludeList: document.getElementById('titleExcludeList'),
+    titleExcludeMaster: document.getElementById('titleExcludeMaster'),
+    titleConflictWarning: document.getElementById('titleConflictWarning'),
 
-    blockedCompaniesEnabled: document.getElementById("blockedCompaniesEnabled"),
-    blockedCompanyInput: document.getElementById("blockedCompanyInput"),
-    addBlockedCompanyBtn: document.getElementById("addBlockedCompanyBtn"),
-    blockedCompaniesList: document.getElementById("blockedCompaniesList"),
-    blockedCompaniesMaster: document.getElementById("blockedCompaniesMaster"),
+    blockedCompaniesEnabled: document.getElementById('blockedCompaniesEnabled'),
+    blockedCompanyInput: document.getElementById('blockedCompanyInput'),
+    addBlockedCompanyBtn: document.getElementById('addBlockedCompanyBtn'),
+    blockedCompaniesList: document.getElementById('blockedCompaniesList'),
+    blockedCompaniesMaster: document.getElementById('blockedCompaniesMaster'),
 
-    labelFiltersEnabled: document.getElementById("labelFiltersEnabled"),
-    requireEarlyApplicant: document.getElementById("requireEarlyApplicant"),
-    requireActivelyReviewing: document.getElementById("requireActivelyReviewing"),
-    hidePromoted: document.getElementById("hidePromoted"),
-    hideWorksHere: document.getElementById("hideWorksHere"),
-    labelStrictnessWarning: document.getElementById("labelStrictnessWarning"),
+    labelFiltersEnabled: document.getElementById('labelFiltersEnabled'),
+    requireEarlyApplicant: document.getElementById('requireEarlyApplicant'),
+    requireActivelyReviewing: document.getElementById('requireActivelyReviewing'),
+    hidePromoted: document.getElementById('hidePromoted'),
+    hideWorksHere: document.getElementById('hideWorksHere'),
+    labelStrictnessWarning: document.getElementById('labelStrictnessWarning'),
 
-    maxPostedHours: document.getElementById("maxPostedHours"),
-    applyPostedHoursNowBtn: document.getElementById("applyPostedHoursNowBtn"),
+    maxPostedHours: document.getElementById('maxPostedHours'),
+    applyPostedHoursNowBtn: document.getElementById('applyPostedHoursNowBtn'),
 
-    displayHide: document.getElementById("displayHide"),
-    displayDim: document.getElementById("displayDim"),
+    displayHide: document.getElementById('displayHide'),
+    displayDim: document.getElementById('displayDim'),
 
-    resetBtn: document.getElementById("resetBtn"),
-    resetModal: document.getElementById("resetModal"),
-    cancelResetBtn: document.getElementById("cancelResetBtn"),
-    confirmResetBtn: document.getElementById("confirmResetBtn")
+    resetBtn: document.getElementById('resetBtn'),
+    resetModal: document.getElementById('resetModal'),
+    cancelResetBtn: document.getElementById('cancelResetBtn'),
+    confirmResetBtn: document.getElementById('confirmResetBtn')
   };
 
   let titleIncludeKeywords = [];
@@ -48,7 +48,7 @@
   let blockedCompanies = [];
 
   function parseOptionalInteger(value) {
-    if (value === "" || value === null || value === undefined) {
+    if (value === '' || value === null || value === undefined) {
       return null;
     }
     const parsed = Number(value);
@@ -59,47 +59,49 @@
   }
 
   function normalizeToken(value) {
-    return String(value || "").trim().replace(/\s+/g, " ");
+    return String(value || '')
+      .trim()
+      .replace(/\s+/g, ' ');
   }
 
   function renderTokenList(container, values, emptyText, listClass) {
-    container.innerHTML = "";
+    container.innerHTML = '';
 
     if (!values.length) {
-      const empty = document.createElement("div");
-      empty.className = "token-empty";
+      const empty = document.createElement('div');
+      empty.className = 'token-empty';
       empty.textContent = emptyText;
       container.appendChild(empty);
       return;
     }
 
     values.forEach((item, index) => {
-      const row = document.createElement("div");
-      row.className = "token-item";
+      const row = document.createElement('div');
+      row.className = 'token-item';
 
-      const label = document.createElement("label");
-      label.className = "token-label";
+      const label = document.createElement('label');
+      label.className = 'token-label';
 
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.className = "token-enabled";
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'token-enabled';
       checkbox.dataset.listClass = listClass;
       checkbox.dataset.index = String(index);
       checkbox.checked = item.enabled !== false;
 
-      const text = document.createElement("span");
+      const text = document.createElement('span');
       text.textContent = item.value;
 
       label.appendChild(checkbox);
       label.appendChild(text);
 
-      const removeBtn = document.createElement("button");
-      removeBtn.type = "button";
-      removeBtn.className = "ghost token-delete";
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'ghost token-delete';
       removeBtn.dataset.listClass = listClass;
       removeBtn.dataset.index = String(index);
-      removeBtn.textContent = "×";
-      removeBtn.setAttribute("aria-label", `Delete ${item.value}`);
+      removeBtn.textContent = '×';
+      removeBtn.setAttribute('aria-label', `Delete ${item.value}`);
 
       row.appendChild(label);
       row.appendChild(removeBtn);
@@ -108,9 +110,9 @@
   }
 
   function toWords(value) {
-    return String(value || "")
+    return String(value || '')
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, " ")
+      .replace(/[^a-z0-9]+/g, ' ')
       .trim()
       .split(/\s+/)
       .filter(Boolean);
@@ -119,7 +121,11 @@
   function phraseContainedIn(containerPhrase, containedPhrase) {
     const containerWords = toWords(containerPhrase);
     const containedWords = toWords(containedPhrase);
-    if (!containerWords.length || !containedWords.length || containedWords.length > containerWords.length) {
+    if (
+      !containerWords.length ||
+      !containedWords.length ||
+      containedWords.length > containerWords.length
+    ) {
       return false;
     }
 
@@ -179,29 +185,33 @@
           const excInsideInc = phraseContainedIn(inc, exc);
           const incInsideExc = phraseContainedIn(exc, inc);
           if (excInsideInc && !incInsideExc) {
-            warnings.push(`Exclude phrase “${exc}” is broader than include “${inc}”; many matching includes will be filtered out.`);
+            warnings.push(
+              `Exclude phrase “${exc}” is broader than include “${inc}”; many matching includes will be filtered out.`
+            );
           } else if (incInsideExc && !excInsideInc) {
-            warnings.push(`Exclude phrase “${exc}” overlaps include “${inc}”; some included jobs will still be filtered out.`);
+            warnings.push(
+              `Exclude phrase “${exc}” overlaps include “${inc}”; some included jobs will still be filtered out.`
+            );
           }
         });
       });
     }
 
     if (includeEnabled && titleIncludeKeywords.length && include.length === 0) {
-      warnings.push("Include rules are enabled but all include keywords are unchecked.");
+      warnings.push('Include rules are enabled but all include keywords are unchecked.');
     }
     if (excludeEnabled && titleExcludeKeywords.length && exclude.length === 0) {
-      warnings.push("Exclude rules are enabled but all exclude keywords are unchecked.");
+      warnings.push('Exclude rules are enabled but all exclude keywords are unchecked.');
     }
 
     const deduped = [...new Set(warnings)].slice(0, 4);
     if (elements.titleConflictWarning) {
       if (deduped.length) {
         elements.titleConflictWarning.hidden = false;
-        elements.titleConflictWarning.textContent = deduped.join(" ");
+        elements.titleConflictWarning.textContent = deduped.join(' ');
       } else {
         elements.titleConflictWarning.hidden = true;
-        elements.titleConflictWarning.textContent = "";
+        elements.titleConflictWarning.textContent = '';
       }
     }
 
@@ -216,18 +226,34 @@
     if (elements.labelStrictnessWarning) {
       if (strictEnabled && strictRules >= 2) {
         elements.labelStrictnessWarning.hidden = false;
-        elements.labelStrictnessWarning.textContent = "Multiple strict label rules are enabled together. This can reduce visible jobs dramatically.";
+        elements.labelStrictnessWarning.textContent =
+          'Multiple strict label rules are enabled together. This can reduce visible jobs dramatically.';
       } else {
         elements.labelStrictnessWarning.hidden = true;
-        elements.labelStrictnessWarning.textContent = "";
+        elements.labelStrictnessWarning.textContent = '';
       }
     }
   }
 
   function renderAllLists() {
-    renderTokenList(elements.titleIncludeList, titleIncludeKeywords, "No include role keywords yet.", "include");
-    renderTokenList(elements.titleExcludeList, titleExcludeKeywords, "No excluded role keywords yet.", "exclude");
-    renderTokenList(elements.blockedCompaniesList, blockedCompanies, "No excluded companies yet.", "company");
+    renderTokenList(
+      elements.titleIncludeList,
+      titleIncludeKeywords,
+      'No include role keywords yet.',
+      'include'
+    );
+    renderTokenList(
+      elements.titleExcludeList,
+      titleExcludeKeywords,
+      'No excluded role keywords yet.',
+      'exclude'
+    );
+    renderTokenList(
+      elements.blockedCompaniesList,
+      blockedCompanies,
+      'No excluded companies yet.',
+      'company'
+    );
     syncMasterCheckboxes();
     updateConflictWarnings();
   }
@@ -235,17 +261,17 @@
   function updateSectionVisualStates() {
     const masterEnabled = elements.enableFiltering.checked;
 
-    document.querySelectorAll("section.card[data-gate]").forEach((section) => {
-      const gateId = section.getAttribute("data-gate");
+    document.querySelectorAll('section.card[data-gate]').forEach((section) => {
+      const gateId = section.getAttribute('data-gate');
       const gateControl = gateId ? elements[gateId] : null;
       const sectionEnabled = masterEnabled && gateControl && gateControl.checked;
-      section.classList.toggle("is-disabled", !sectionEnabled);
+      section.classList.toggle('is-disabled', !sectionEnabled);
     });
 
-    [".card-display", ".card-time"].forEach((selector) => {
+    ['.card-display', '.card-time'].forEach((selector) => {
       const card = document.querySelector(selector);
       if (card) {
-        card.classList.toggle("is-disabled", !masterEnabled);
+        card.classList.toggle('is-disabled', !masterEnabled);
       }
     });
   }
@@ -257,9 +283,15 @@
     elements.titleExcludeEnabled.checked = settings.titleExcludeEnabled;
     elements.blockedCompaniesEnabled.checked = settings.blockedCompaniesEnabled;
 
-    titleIncludeKeywords = Array.isArray(settings.titleIncludeKeywords) ? settings.titleIncludeKeywords.slice() : [];
-    titleExcludeKeywords = Array.isArray(settings.titleExcludeKeywords) ? settings.titleExcludeKeywords.slice() : [];
-    blockedCompanies = Array.isArray(settings.blockedCompanies) ? settings.blockedCompanies.slice() : [];
+    titleIncludeKeywords = Array.isArray(settings.titleIncludeKeywords)
+      ? settings.titleIncludeKeywords.slice()
+      : [];
+    titleExcludeKeywords = Array.isArray(settings.titleExcludeKeywords)
+      ? settings.titleExcludeKeywords.slice()
+      : [];
+    blockedCompanies = Array.isArray(settings.blockedCompanies)
+      ? settings.blockedCompanies.slice()
+      : [];
     renderAllLists();
 
     elements.labelFiltersEnabled.checked = settings.labelFiltersEnabled;
@@ -268,14 +300,15 @@
     elements.hidePromoted.checked = settings.hidePromoted;
     elements.hideWorksHere.checked = settings.hideWorksHere;
 
-    elements.maxPostedHours.value = settings.maxPostedHours === null ? "" : String(settings.maxPostedHours);
+    elements.maxPostedHours.value =
+      settings.maxPostedHours === null ? '' : String(settings.maxPostedHours);
 
-    elements.displayHide.checked = settings.filterMode === "hide";
-    elements.displayDim.checked = settings.filterMode === "dim";
+    elements.displayHide.checked = settings.filterMode === 'hide';
+    elements.displayDim.checked = settings.filterMode === 'dim';
 
-    elements.titleIncludeInput.value = "";
-    elements.titleExcludeInput.value = "";
-    elements.blockedCompanyInput.value = "";
+    elements.titleIncludeInput.value = '';
+    elements.titleExcludeInput.value = '';
+    elements.blockedCompanyInput.value = '';
 
     setControlsEnabled(settings.enableFiltering);
     updateSectionVisualStates();
@@ -301,7 +334,7 @@
       applyPostedHoursToUrl: false,
       maxPostedHours: parseOptionalInteger(elements.maxPostedHours.value),
 
-      filterMode: elements.displayDim.checked ? "dim" : "hide"
+      filterMode: elements.displayDim.checked ? 'dim' : 'hide'
     };
   }
 
@@ -333,7 +366,7 @@
       node.disabled = disabled;
     });
 
-    document.querySelectorAll(".token-enabled,.token-delete,.preset-btn").forEach((node) => {
+    document.querySelectorAll('.token-enabled,.token-delete,.preset-btn').forEach((node) => {
       node.disabled = disabled;
     });
   }
@@ -343,7 +376,9 @@
     if (!value) {
       return false;
     }
-    const exists = list.some((item) => normalizeToken(item.value).toLowerCase() === value.toLowerCase());
+    const exists = list.some(
+      (item) => normalizeToken(item.value).toLowerCase() === value.toLowerCase()
+    );
     if (exists) {
       return false;
     }
@@ -352,13 +387,13 @@
   }
 
   function resolveList(key) {
-    if (key === "include") {
+    if (key === 'include') {
       return titleIncludeKeywords;
     }
-    if (key === "exclude") {
+    if (key === 'exclude') {
       return titleExcludeKeywords;
     }
-    if (key === "company") {
+    if (key === 'company') {
       return blockedCompanies;
     }
     return null;
@@ -408,10 +443,10 @@
       await chrome.scripting.executeScript({
         target: { tabId },
         files: [
-          "src/shared/constants.js",
-          "src/shared/parsers.js",
-          "src/shared/storage.js",
-          "src/content.js"
+          'src/shared/constants.js',
+          'src/shared/parsers.js',
+          'src/shared/storage.js',
+          'src/content.js'
         ]
       });
       return true;
@@ -422,7 +457,7 @@
 
   async function pingContentScript(message) {
     const tab = await getActiveTab();
-    if (!tab || !tab.id || !tab.url || !tab.url.includes("linkedin.com")) {
+    if (!tab || !tab.id || !tab.url || !tab.url.includes('linkedin.com')) {
       return null;
     }
 
@@ -449,20 +484,20 @@
 
   async function addAndSave(list, input) {
     if (!addToken(list, input.value)) {
-      input.value = "";
+      input.value = '';
       input.focus();
       return;
     }
     renderAllLists();
     await applySettings();
-    input.value = "";
+    input.value = '';
     input.focus();
   }
 
   function wireListContainer(container) {
-    container.addEventListener("change", async (event) => {
+    container.addEventListener('change', async (event) => {
       const target = event.target;
-      if (!(target instanceof HTMLElement) || !target.classList.contains("token-enabled")) {
+      if (!(target instanceof HTMLElement) || !target.classList.contains('token-enabled')) {
         return;
       }
       const list = resolveList(target.dataset.listClass);
@@ -477,9 +512,9 @@
       await applySettings();
     });
 
-    container.addEventListener("click", async (event) => {
+    container.addEventListener('click', async (event) => {
       const target = event.target;
-      if (!(target instanceof HTMLElement) || !target.classList.contains("token-delete")) {
+      if (!(target instanceof HTMLElement) || !target.classList.contains('token-delete')) {
         return;
       }
       const list = resolveList(target.dataset.listClass);
@@ -497,13 +532,13 @@
   }
 
   function openResetModal() {
-    elements.resetModal.classList.add("open");
-    elements.resetModal.setAttribute("aria-hidden", "false");
+    elements.resetModal.classList.add('open');
+    elements.resetModal.setAttribute('aria-hidden', 'false');
   }
 
   function closeResetModal() {
-    elements.resetModal.classList.remove("open");
-    elements.resetModal.setAttribute("aria-hidden", "true");
+    elements.resetModal.classList.remove('open');
+    elements.resetModal.setAttribute('aria-hidden', 'true');
   }
 
   function addEventListeners() {
@@ -523,7 +558,7 @@
     ];
 
     controls.forEach((node) => {
-      node.addEventListener("change", async () => {
+      node.addEventListener('change', async () => {
         if (node === elements.enableFiltering) {
           setControlsEnabled(elements.enableFiltering.checked);
         }
@@ -533,49 +568,57 @@
       });
     });
 
-    elements.addTitleIncludeBtn.addEventListener("click", () => addAndSave(titleIncludeKeywords, elements.titleIncludeInput));
-    elements.addTitleExcludeBtn.addEventListener("click", () => addAndSave(titleExcludeKeywords, elements.titleExcludeInput));
-    elements.addBlockedCompanyBtn.addEventListener("click", () => addAndSave(blockedCompanies, elements.blockedCompanyInput));
+    elements.addTitleIncludeBtn.addEventListener('click', () =>
+      addAndSave(titleIncludeKeywords, elements.titleIncludeInput)
+    );
+    elements.addTitleExcludeBtn.addEventListener('click', () =>
+      addAndSave(titleExcludeKeywords, elements.titleExcludeInput)
+    );
+    elements.addBlockedCompanyBtn.addEventListener('click', () =>
+      addAndSave(blockedCompanies, elements.blockedCompanyInput)
+    );
 
-    [elements.titleIncludeInput, elements.titleExcludeInput, elements.blockedCompanyInput].forEach((input) => {
-      input.addEventListener("keydown", (event) => {
-        if (event.key !== "Enter") {
-          return;
-        }
-        event.preventDefault();
-        if (input === elements.titleIncludeInput) {
-          elements.addTitleIncludeBtn.click();
-        } else if (input === elements.titleExcludeInput) {
-          elements.addTitleExcludeBtn.click();
-        } else {
-          elements.addBlockedCompanyBtn.click();
-        }
-      });
-    });
+    [elements.titleIncludeInput, elements.titleExcludeInput, elements.blockedCompanyInput].forEach(
+      (input) => {
+        input.addEventListener('keydown', (event) => {
+          if (event.key !== 'Enter') {
+            return;
+          }
+          event.preventDefault();
+          if (input === elements.titleIncludeInput) {
+            elements.addTitleIncludeBtn.click();
+          } else if (input === elements.titleExcludeInput) {
+            elements.addTitleExcludeBtn.click();
+          } else {
+            elements.addBlockedCompanyBtn.click();
+          }
+        });
+      }
+    );
 
     wireListContainer(elements.titleIncludeList);
     wireListContainer(elements.titleExcludeList);
     wireListContainer(elements.blockedCompaniesList);
 
     if (elements.titleIncludeMaster) {
-      elements.titleIncludeMaster.addEventListener("change", async () => {
+      elements.titleIncludeMaster.addEventListener('change', async () => {
         await toggleAllInList(titleIncludeKeywords, elements.titleIncludeMaster.checked);
       });
     }
     if (elements.titleExcludeMaster) {
-      elements.titleExcludeMaster.addEventListener("change", async () => {
+      elements.titleExcludeMaster.addEventListener('change', async () => {
         await toggleAllInList(titleExcludeKeywords, elements.titleExcludeMaster.checked);
       });
     }
     if (elements.blockedCompaniesMaster) {
-      elements.blockedCompaniesMaster.addEventListener("change", async () => {
+      elements.blockedCompaniesMaster.addEventListener('change', async () => {
         await toggleAllInList(blockedCompanies, elements.blockedCompaniesMaster.checked);
       });
     }
 
-    document.querySelectorAll(".help-tip-btn").forEach((button) => {
-      button.addEventListener("click", () => {
-        const helpId = button.getAttribute("data-help-id");
+    document.querySelectorAll('.help-tip-btn').forEach((button) => {
+      button.addEventListener('click', () => {
+        const helpId = button.getAttribute('data-help-id');
         if (!helpId) {
           return;
         }
@@ -583,14 +626,14 @@
         if (!panel) {
           return;
         }
-        const open = panel.classList.toggle("open");
-        button.setAttribute("aria-expanded", open ? "true" : "false");
+        const open = panel.classList.toggle('open');
+        button.setAttribute('aria-expanded', open ? 'true' : 'false');
       });
     });
 
-    document.querySelectorAll(".preset-btn").forEach((button) => {
-      button.addEventListener("click", async () => {
-        const hours = Number(button.getAttribute("data-hours"));
+    document.querySelectorAll('.preset-btn').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const hours = Number(button.getAttribute('data-hours'));
         if (!Number.isFinite(hours) || hours <= 0) {
           return;
         }
@@ -599,29 +642,33 @@
       });
     });
 
-    elements.applyPostedHoursNowBtn.addEventListener("click", async () => {
+    elements.applyPostedHoursNowBtn.addEventListener('click', async () => {
       await applySettings();
-      await pingContentScript({ type: MESSAGE_TYPES.APPLY_POSTED_HOURS_URL, force: true, manual: true });
+      await pingContentScript({
+        type: MESSAGE_TYPES.APPLY_POSTED_HOURS_URL,
+        force: true,
+        manual: true
+      });
     });
 
-    elements.resetBtn.addEventListener("click", openResetModal);
-    elements.cancelResetBtn.addEventListener("click", closeResetModal);
+    elements.resetBtn.addEventListener('click', openResetModal);
+    elements.cancelResetBtn.addEventListener('click', closeResetModal);
 
-    elements.confirmResetBtn.addEventListener("click", async () => {
+    elements.confirmResetBtn.addEventListener('click', async () => {
       const defaults = await shared.storage.resetSettings();
       bindSettingsToUI(defaults);
       closeResetModal();
       await pingContentScript({ type: MESSAGE_TYPES.SETTINGS_UPDATED, settings: defaults });
     });
 
-    elements.resetModal.addEventListener("click", (event) => {
+    elements.resetModal.addEventListener('click', (event) => {
       if (event.target === elements.resetModal) {
         closeResetModal();
       }
     });
 
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && elements.resetModal.classList.contains("open")) {
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && elements.resetModal.classList.contains('open')) {
         closeResetModal();
       }
     });
@@ -633,9 +680,9 @@
       bindSettingsToUI(settings);
       addEventListeners();
     } catch (error) {
-      console.error("[inRole] Popup init failed", error);
+      console.error('[inRole] Popup init failed', error);
     }
   }
 
   init();
-})(typeof self !== "undefined" ? self : window);
+})(typeof self !== 'undefined' ? self : window);

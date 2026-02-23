@@ -11,9 +11,7 @@
       <header class="hero">
         <div>
           <h1>inRole</h1>
-          <p>
-            All filters apply immediately except URL time, which uses Apply.
-          </p>
+          <p>All filters apply immediately except URL time, which uses Apply.</p>
         </div>
         <label class="switch" for="enableFiltering" title="Enable all filters">
           <input type="checkbox" id="enableFiltering" />
@@ -21,11 +19,7 @@
         </label>
       </header>
 
-      <section
-        class="card card-include"
-        id="includeSection"
-        data-gate="titleIncludeEnabled"
-      >
+      <section class="card card-include" id="includeSection" data-gate="titleIncludeEnabled">
         <div class="section-head">
           <div class="title-help">
             <h2>Target Roles (OR)</h2>
@@ -49,11 +43,7 @@
             A job title must match at least one enabled phrase in this list.
           </p>
           <div class="input-row">
-            <input
-              id="titleIncludeInput"
-              type="text"
-              placeholder="ux designer"
-            />
+            <input id="titleIncludeInput" type="text" placeholder="ux designer" />
             <button
               id="addTitleIncludeBtn"
               type="button"
@@ -71,11 +61,7 @@
         </div>
       </section>
 
-      <section
-        class="card card-exclude"
-        id="excludeSection"
-        data-gate="titleExcludeEnabled"
-      >
+      <section class="card card-exclude" id="excludeSection" data-gate="titleExcludeEnabled">
         <div class="section-head">
           <div class="title-help">
             <h2>Role Exclusions</h2>
@@ -96,8 +82,7 @@
         </div>
         <div class="card-body">
           <p id="help-exclude" class="help-inline">
-            Any matching phrase here filters the job out. Exclusions take
-            priority over includes.
+            Any matching phrase here filters the job out. Exclusions take priority over includes.
           </p>
           <div class="input-row">
             <input
@@ -123,11 +108,7 @@
         </div>
       </section>
 
-      <section
-        class="card card-company"
-        id="companySection"
-        data-gate="blockedCompaniesEnabled"
-      >
+      <section class="card card-company" id="companySection" data-gate="blockedCompaniesEnabled">
         <div class="section-head">
           <div class="title-help">
             <h2>Company Exclusions</h2>
@@ -147,15 +128,9 @@
           </label>
         </div>
         <div class="card-body">
-          <p id="help-company" class="help-inline">
-            Partial, case-insensitive company matching.
-          </p>
+          <p id="help-company" class="help-inline">Partial, case-insensitive company matching.</p>
           <div class="input-row">
-            <input
-              id="blockedCompanyInput"
-              type="text"
-              placeholder="Jobgether"
-            />
+            <input id="blockedCompanyInput" type="text" placeholder="Jobgether" />
             <button
               id="addBlockedCompanyBtn"
               type="button"
@@ -173,11 +148,7 @@
         </div>
       </section>
 
-      <section
-        class="card card-labels"
-        id="labelsSection"
-        data-gate="labelFiltersEnabled"
-      >
+      <section class="card card-labels" id="labelsSection" data-gate="labelFiltersEnabled">
         <div class="section-head">
           <div class="title-help">
             <h2>High-Strictness Label Filters</h2>
@@ -198,40 +169,32 @@
         </div>
         <div class="card-body">
           <p id="help-labels" class="help-inline">
-            These are strict tile-label rules and are combined together (AND).
-            They can reduce results to very few jobs.
+            These are strict tile-label rules and are combined together (AND). They can reduce
+            results to very few jobs.
           </p>
           <div class="toggle-grid">
             <div class="toggle-row compact-row">
               <span>Hide jobs marked “Promoted”</span
               ><label class="switch switch-sm"
-                ><input type="checkbox" id="hidePromoted" /><span
-                  class="slider"
-                ></span
+                ><input type="checkbox" id="hidePromoted" /><span class="slider"></span
               ></label>
             </div>
             <div class="toggle-row compact-row">
               <span>Only show “Early applicant” jobs</span
               ><label class="switch switch-sm"
-                ><input type="checkbox" id="requireEarlyApplicant" /><span
-                  class="slider"
-                ></span
+                ><input type="checkbox" id="requireEarlyApplicant" /><span class="slider"></span
               ></label>
             </div>
             <div class="toggle-row compact-row">
               <span>Only show “Actively reviewing applicants” jobs</span
               ><label class="switch switch-sm"
-                ><input type="checkbox" id="requireActivelyReviewing" /><span
-                  class="slider"
-                ></span
+                ><input type="checkbox" id="requireActivelyReviewing" /><span class="slider"></span
               ></label>
             </div>
             <div class="toggle-row compact-row">
               <span>Only show “works/work here” jobs</span
               ><label class="switch switch-sm"
-                ><input type="checkbox" id="hideWorksHere" /><span
-                  class="slider"
-                ></span
+                ><input type="checkbox" id="hideWorksHere" /><span class="slider"></span
               ></label>
             </div>
           </div>
@@ -256,29 +219,18 @@
         </div>
         <div class="card-body">
           <p id="help-display" class="help-inline">
-            Choose whether filtered jobs are fully hidden or kept visible but
-            dimmed.
+            Choose whether filtered jobs are fully hidden or kept visible but dimmed.
           </p>
-          <div
-            class="radio-group"
-            role="radiogroup"
-            aria-label="Filtered jobs display mode"
-          >
+          <div class="radio-group" role="radiogroup" aria-label="Filtered jobs display mode">
             <label class="radio-row"
-              ><input
-                type="radio"
-                name="filterMode"
-                id="displayHide"
-                value="hide"
-              /><span>Hide filtered jobs</span></label
+              ><input type="radio" name="filterMode" id="displayHide" value="hide" /><span
+                >Hide filtered jobs</span
+              ></label
             >
             <label class="radio-row"
-              ><input
-                type="radio"
-                name="filterMode"
-                id="displayDim"
-                value="dim"
-              /><span>Dim filtered jobs</span></label
+              ><input type="radio" name="filterMode" id="displayDim" value="dim" /><span
+                >Dim filtered jobs</span
+              ></label
             >
           </div>
         </div>
@@ -300,58 +252,34 @@
           </div>
         </div>
         <p id="help-time" class="help-inline">
-          Sets the LinkedIn URL time filter. 1 means last 1 hour, 24 means last
-          24 hours.
+          Sets the LinkedIn URL time filter. 1 means last 1 hour, 24 means last 24 hours.
         </p>
         <label class="field-label" for="maxPostedHours"
           >Only show listings posted in the past</label
         >
         <div class="input-row time-row">
-          <input
-            id="maxPostedHours"
-            type="number"
-            min="1"
-            step="1"
-            placeholder="12"
-          />
+          <input id="maxPostedHours" type="number" min="1" step="1" placeholder="12" />
           <span class="unit-pill">hours</span>
-          <button id="applyPostedHoursNowBtn" type="button">
-            Apply URL time
-          </button>
+          <button id="applyPostedHoursNowBtn" type="button">Apply URL time</button>
         </div>
         <div class="preset-row">
-          <button type="button" class="ghost preset-btn" data-hours="1">
-            1h
-          </button>
-          <button type="button" class="ghost preset-btn" data-hours="24">
-            24h
-          </button>
-          <button type="button" class="ghost preset-btn" data-hours="72">
-            72h
-          </button>
+          <button type="button" class="ghost preset-btn" data-hours="1">1h</button>
+          <button type="button" class="ghost preset-btn" data-hours="24">24h</button>
+          <button type="button" class="ghost preset-btn" data-hours="72">72h</button>
         </div>
       </section>
 
       <footer class="footer-actions">
-        <button id="resetBtn" type="button" class="ghost">
-          Restore Defaults
-        </button>
+        <button id="resetBtn" type="button" class="ghost">Restore Defaults</button>
       </footer>
     </main>
 
     <div id="resetModal" class="modal-backdrop" aria-hidden="true">
-      <div
-        class="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="resetModalTitle"
-      >
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="resetModalTitle">
         <h3 id="resetModalTitle">Restore default filters?</h3>
         <p>This will replace your current filter setup with defaults.</p>
         <div class="modal-actions">
-          <button id="cancelResetBtn" type="button" class="ghost">
-            Cancel
-          </button>
+          <button id="cancelResetBtn" type="button" class="ghost">Cancel</button>
           <button id="confirmResetBtn" type="button">Restore</button>
         </div>
       </div>

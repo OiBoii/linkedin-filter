@@ -4,12 +4,7 @@
     return;
   }
 
-  const {
-    DEFAULT_SETTINGS,
-    MESSAGE_TYPES,
-    normalizeText,
-    isPromotedOrSponsored
-  } = shared;
+  const { DEFAULT_SETTINGS, MESSAGE_TYPES, normalizeText, isPromotedOrSponsored } = shared;
 
   let settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
   let observer = null;
@@ -27,33 +22,33 @@
   let latestDebugReport = null;
 
   const CARD_ROOT_SELECTORS = [
-    "li.jobs-search-results__list-item",
-    "li[data-occludable-job-id]",
-    "li[data-job-id]",
-    "article[data-job-id]",
-    "div[data-job-id]",
-    "div[data-occludable-job-id]",
-    ".job-card-container",
-    ".job-card-list__entity-lockup"
+    'li.jobs-search-results__list-item',
+    'li[data-occludable-job-id]',
+    'li[data-job-id]',
+    'article[data-job-id]',
+    'div[data-job-id]',
+    'div[data-occludable-job-id]',
+    '.job-card-container',
+    '.job-card-list__entity-lockup'
   ];
 
   const TITLE_SELECTORS = [
-    "a.job-card-list__title",
-    "a.job-card-container__link",
-    "a.job-card-container__title",
+    'a.job-card-list__title',
+    'a.job-card-container__link',
+    'a.job-card-container__title',
     "a[href*='/jobs/view/']",
-    ".artdeco-entity-lockup__title a"
+    '.artdeco-entity-lockup__title a'
   ];
 
   const COMPANY_SELECTORS = [
-    ".job-card-container__company-name",
-    ".artdeco-entity-lockup__subtitle",
-    ".job-card-list__subtitle",
-    ".base-search-card__subtitle"
+    '.job-card-container__company-name',
+    '.artdeco-entity-lockup__subtitle',
+    '.job-card-list__subtitle',
+    '.base-search-card__subtitle'
   ];
 
   function safeText(element) {
-    return element && typeof element.textContent === "string" ? element.textContent.trim() : "";
+    return element && typeof element.textContent === 'string' ? element.textContent.trim() : '';
   }
 
   function firstText(card, selectors) {
@@ -64,28 +59,31 @@
         return text;
       }
     }
-    return "";
+    return '';
   }
 
   function normalizeCardRoot(node) {
     if (!(node instanceof HTMLElement)) {
       return null;
     }
-    return node.closest("li.jobs-search-results__list-item, li[data-occludable-job-id], li[data-job-id], article[data-job-id], div[data-job-id], div[data-occludable-job-id], .job-card-container, .job-card-list__entity-lockup");
+    return node.closest(
+      'li.jobs-search-results__list-item, li[data-occludable-job-id], li[data-job-id], article[data-job-id], div[data-job-id], div[data-occludable-job-id], .job-card-container, .job-card-list__entity-lockup'
+    );
   }
 
   function getCardIdentity(card) {
     if (!(card instanceof HTMLElement)) {
-      return "";
+      return '';
     }
 
-    const dataJobId = card.getAttribute("data-job-id") || card.getAttribute("data-occludable-job-id");
+    const dataJobId =
+      card.getAttribute('data-job-id') || card.getAttribute('data-occludable-job-id');
     if (dataJobId) {
       return `job:${dataJobId}`;
     }
 
     const link = card.querySelector("a[href*='/jobs/view/']");
-    const href = link ? link.getAttribute("href") || "" : "";
+    const href = link ? link.getAttribute('href') || '' : '';
     const idMatch = href.match(/\/jobs\/view\/(\d+)/);
     if (idMatch && idMatch[1]) {
       return `job:${idMatch[1]}`;
@@ -97,7 +95,7 @@
       return `fallback:${normalizeText(`${title} ${company}`)}`;
     }
 
-    return "";
+    return '';
   }
 
   function getCandidateCards() {
@@ -140,12 +138,12 @@
   }
 
   function normalizeKeyword(value) {
-    return normalizeText(value).replace(/\s+/g, " ").trim();
+    return normalizeText(value).replace(/\s+/g, ' ').trim();
   }
 
   function toWords(value) {
     return normalizeKeyword(value)
-      .replace(/[^a-z0-9]+/g, " ")
+      .replace(/[^a-z0-9]+/g, ' ')
       .trim()
       .split(/\s+/)
       .filter(Boolean);
@@ -158,7 +156,7 @@
 
     const out = [];
     for (const item of list) {
-      if (typeof item === "string") {
+      if (typeof item === 'string') {
         const legacy = normalizeKeyword(item);
         if (legacy) {
           out.push(legacy);
@@ -269,8 +267,8 @@
       .filter((line) => line.length > 0);
 
     if (title) {
-      title = title.replace(/\s+with verification$/i, "").trim();
-      title = title.replace(/\s+/g, " ").trim();
+      title = title.replace(/\s+with verification$/i, '').trim();
+      title = title.replace(/\s+/g, ' ').trim();
 
       // LinkedIn can duplicate title text in accessibility spans.
       const duplicate = title.match(/^(.{4,}?)\1$/);
@@ -323,7 +321,7 @@
     if (settings.titleIncludeEnabled && includeKeywords.length) {
       const includeMatches = findMatchedTitlePhrases(titleTarget, includeKeywords);
       if (!includeMatches.length) {
-        reasons.push("include:no-match");
+        reasons.push('include:no-match');
       } else {
         matched.push(...includeMatches.map((token) => `include:${token}`));
       }
@@ -333,7 +331,7 @@
     if (settings.titleExcludeEnabled && excludeKeywords.length) {
       const excludeMatches = findMatchedTitlePhrases(titleTarget, excludeKeywords);
       if (excludeMatches.length) {
-        reasons.push("exclude:matched");
+        reasons.push('exclude:matched');
         matched.push(...excludeMatches.map((token) => `exclude:${token}`));
       }
     }
@@ -344,26 +342,26 @@
       const tileMatches = findMatchedCompanyTokens(parsed.cardText, blockedValues);
       const blockedMatches = [...new Set([...companyMatches, ...tileMatches])];
       if (blockedMatches.length) {
-        reasons.push("company:blocked");
+        reasons.push('company:blocked');
         matched.push(...blockedMatches.map((token) => `company:${token}`));
       }
     }
 
     if (settings.labelFiltersEnabled) {
       if (settings.requireEarlyApplicant && !parsed.hasEarlyApplicant) {
-        reasons.push("label:missing-early-applicant");
+        reasons.push('label:missing-early-applicant');
       }
 
       if (settings.requireActivelyReviewing && !parsed.hasActivelyReviewing) {
-        reasons.push("label:missing-actively-reviewing");
+        reasons.push('label:missing-actively-reviewing');
       }
 
       if (settings.hidePromoted && parsed.hasPromoted) {
-        reasons.push("label:promoted");
+        reasons.push('label:promoted');
       }
 
       if (settings.hideWorksHere && !parsed.hasWorksHere) {
-        reasons.push("label:missing-works-here");
+        reasons.push('label:missing-works-here');
       }
     }
 
@@ -375,12 +373,12 @@
   }
 
   function ensureStyles() {
-    if (document.getElementById("linkedin-filter-style")) {
+    if (document.getElementById('linkedin-filter-style')) {
       return;
     }
 
-    const style = document.createElement("style");
-    style.id = "linkedin-filter-style";
+    const style = document.createElement('style');
+    style.id = 'linkedin-filter-style';
     style.textContent = `
       .linkedin-filter-dimmed {
         opacity: 0.32 !important;
@@ -396,32 +394,32 @@
 
   function applyCardState(card, passFilters) {
     if (!card.dataset.linkedinFilterOriginalDisplay) {
-      card.dataset.linkedinFilterOriginalDisplay = card.style.display || "";
+      card.dataset.linkedinFilterOriginalDisplay = card.style.display || '';
     }
 
-    const listItem = card.closest("li.jobs-search-results__list-item");
-    card.classList.remove("linkedin-filter-dimmed");
-    card.classList.remove("linkedin-filter-hidden");
+    const listItem = card.closest('li.jobs-search-results__list-item');
+    card.classList.remove('linkedin-filter-dimmed');
+    card.classList.remove('linkedin-filter-hidden');
     if (listItem) {
-      listItem.classList.remove("linkedin-filter-hidden");
+      listItem.classList.remove('linkedin-filter-hidden');
     }
 
     if (passFilters || !settings.enableFiltering) {
-      card.style.display = card.dataset.linkedinFilterOriginalDisplay || "";
+      card.style.display = card.dataset.linkedinFilterOriginalDisplay || '';
       return;
     }
 
-    if (settings.filterMode === "dim") {
-      card.style.display = card.dataset.linkedinFilterOriginalDisplay || "";
-      card.classList.add("linkedin-filter-dimmed");
+    if (settings.filterMode === 'dim') {
+      card.style.display = card.dataset.linkedinFilterOriginalDisplay || '';
+      card.classList.add('linkedin-filter-dimmed');
       return;
     }
 
-    card.classList.add("linkedin-filter-hidden");
+    card.classList.add('linkedin-filter-hidden');
     if (listItem) {
-      listItem.classList.add("linkedin-filter-hidden");
+      listItem.classList.add('linkedin-filter-hidden');
     }
-    card.style.display = "none";
+    card.style.display = 'none';
   }
 
   function getDesiredTprValue() {
@@ -449,19 +447,19 @@
       return false;
     }
 
-    if (!url.pathname.includes("/jobs/")) {
+    if (!url.pathname.includes('/jobs/')) {
       return false;
     }
 
-    const currentF = url.searchParams.get("f_TPR");
-    const currentLegacy = url.searchParams.get("TPR");
+    const currentF = url.searchParams.get('f_TPR');
+    const currentLegacy = url.searchParams.get('TPR');
 
     if (!force && currentF === desired && !currentLegacy) {
       return false;
     }
 
-    url.searchParams.delete("TPR");
-    url.searchParams.set("f_TPR", desired);
+    url.searchParams.delete('TPR');
+    url.searchParams.set('f_TPR', desired);
 
     const next = url.toString();
     if (next === location.href) {
@@ -474,7 +472,7 @@
 
   function performScan(scanReason, captureDetails) {
     if (isScanning && !captureDetails) {
-      pendingScanReason = scanReason || "queued";
+      pendingScanReason = scanReason || 'queued';
       return;
     }
 
@@ -497,19 +495,19 @@
 
           if (!passFilters) {
             filtered += 1;
-            if (settings.filterMode === "hide") {
+            if (settings.filterMode === 'hide') {
               hidden += 1;
             }
           }
 
           applyCardState(card, passFilters);
-          card.dataset.linkedinFilterFiltered = passFilters ? "0" : "1";
+          card.dataset.linkedinFilterFiltered = passFilters ? '0' : '1';
 
           if (shouldCaptureDetails) {
-            const action = passFilters ? "show" : (settings.filterMode === "hide" ? "hide" : "dim");
+            const action = passFilters ? 'show' : settings.filterMode === 'hide' ? 'hide' : 'dim';
             debugCards.push({
-              title: parsed.title || "",
-              company: parsed.company || "",
+              title: parsed.title || '',
+              company: parsed.company || '',
               pass: passFilters,
               action,
               reasons: evaluation.reasons,
@@ -530,21 +528,21 @@
         filtered,
         hidden,
         timestamp: Date.now(),
-        reason: scanReason || "auto"
+        reason: scanReason || 'auto'
       };
 
       if (shouldCaptureDetails) {
         latestDebugReport = {
           timestamp: Date.now(),
           href: location.href,
-          reason: scanReason || "auto",
+          reason: scanReason || 'auto',
           stats: Object.assign({}, latestStats),
           activeFilters: getActiveFiltersSnapshot(),
           cards: debugCards || []
         };
       }
     } catch (error) {
-      console.error("[LinkedInFilter] scan failure", error);
+      console.error('[LinkedInFilter] scan failure', error);
     } finally {
       isScanning = false;
       if (pendingScanReason && !captureDetails) {
@@ -556,13 +554,13 @@
   }
 
   function scheduleScan(reason, immediate) {
-    pendingScanReason = reason || "scheduled";
+    pendingScanReason = reason || 'scheduled';
     if (scanTimer) {
       clearTimeout(scanTimer);
     }
 
     const run = () => {
-      const nextReason = pendingScanReason || reason || "scheduled";
+      const nextReason = pendingScanReason || reason || 'scheduled';
       pendingScanReason = null;
       performScan(nextReason, false);
       scanTimer = null;
@@ -585,8 +583,8 @@
       if (isApplyingCardState) {
         return;
       }
-      if (mutations.some((m) => m.type === "childList")) {
-        scheduleScan("mutation", false);
+      if (mutations.some((m) => m.type === 'childList')) {
+        scheduleScan('mutation', false);
       }
     });
 
@@ -601,7 +599,7 @@
     setInterval(() => {
       if (location.href !== latestHref) {
         latestHref = location.href;
-        scheduleScan("url-change", true);
+        scheduleScan('url-change', true);
       }
     }, 1000);
   }
@@ -612,15 +610,15 @@
       if (applyPostedHoursUrlFilter(false, false)) {
         return;
       }
-      scheduleScan("settings-refresh", true);
+      scheduleScan('settings-refresh', true);
     } catch (error) {
       settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
-      console.warn("[LinkedInFilter] Failed to refresh settings", error);
+      console.warn('[LinkedInFilter] Failed to refresh settings', error);
     }
   }
 
   chrome.storage.onChanged.addListener((changes, areaName) => {
-    if (areaName !== "sync" || !changes[shared.STORAGE_KEY]) {
+    if (areaName !== 'sync' || !changes[shared.STORAGE_KEY]) {
       return;
     }
 
@@ -628,7 +626,7 @@
     if (applyPostedHoursUrlFilter(false, false)) {
       return;
     }
-    scheduleScan("storage-change", true);
+    scheduleScan('storage-change', true);
   });
 
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
@@ -643,7 +641,7 @@
           sendResponse({ ok: true });
           return;
         }
-        scheduleScan("settings-message", true);
+        scheduleScan('settings-message', true);
         sendResponse({ ok: true });
         return;
       }
@@ -654,14 +652,14 @@
     if (message.type === MESSAGE_TYPES.APPLY_POSTED_HOURS_URL) {
       const changed = applyPostedHoursUrlFilter(Boolean(message.force), Boolean(message.manual));
       if (!changed) {
-        scheduleScan("apply-posted-hours-noop", true);
+        scheduleScan('apply-posted-hours-noop', true);
       }
       sendResponse({ ok: true, changed });
       return;
     }
 
     if (message.type === MESSAGE_TYPES.RESCAN) {
-      scheduleScan("manual-rescan", true);
+      scheduleScan('manual-rescan', true);
       sendResponse({ ok: true });
       return;
     }
@@ -672,13 +670,13 @@
     }
 
     if (message.type === MESSAGE_TYPES.REQUEST_DEBUG_REPORT) {
-      performScan("debug-report", true);
+      performScan('debug-report', true);
       sendResponse({
         ok: true,
         data: latestDebugReport || {
           timestamp: Date.now(),
           href: location.href,
-          reason: "not-captured",
+          reason: 'not-captured',
           stats: Object.assign({}, latestStats),
           activeFilters: getActiveFiltersSnapshot(),
           cards: []
@@ -697,10 +695,10 @@
     await refreshSettings();
     startObserver();
     watchUrlChanges();
-    scheduleScan("init", true);
+    scheduleScan('init', true);
   }
 
   init().catch((error) => {
-    console.error("[LinkedInFilter] init failed", error);
+    console.error('[LinkedInFilter] init failed', error);
   });
-})(typeof self !== "undefined" ? self : window);
+})(typeof self !== 'undefined' ? self : window);

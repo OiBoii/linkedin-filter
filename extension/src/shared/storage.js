@@ -1,5 +1,5 @@
 (function initLinkedInFilterStorage(globalScope) {
-  const SHARED_NAMESPACE = "LinkedInFilterShared";
+  const SHARED_NAMESPACE = 'LinkedInFilterShared';
   const shared = globalScope[SHARED_NAMESPACE] || {};
 
   function cloneDefaults() {
@@ -7,7 +7,7 @@
   }
 
   function sanitizeNumber(value, fallbackNull) {
-    if (value === null || value === undefined || value === "") {
+    if (value === null || value === undefined || value === '') {
       return fallbackNull ? null : undefined;
     }
     const numeric = Number(value);
@@ -26,8 +26,10 @@
     const out = [];
 
     value.forEach((item) => {
-      const candidate = typeof item === "string" ? { value: item, enabled: true } : item;
-      const clean = String(candidate && candidate.value ? candidate.value : "").trim().replace(/\s+/g, " ");
+      const candidate = typeof item === 'string' ? { value: item, enabled: true } : item;
+      const clean = String(candidate && candidate.value ? candidate.value : '')
+        .trim()
+        .replace(/\s+/g, ' ');
       if (!clean) {
         return;
       }
@@ -62,20 +64,24 @@
     safe.blockedCompaniesEnabled = Boolean(safe.blockedCompaniesEnabled);
     safe.blockedCompanies = sanitizeToggleList(safe.blockedCompanies);
 
-    safe.labelFiltersEnabled = safe.labelFiltersEnabled === undefined ? true : Boolean(safe.labelFiltersEnabled);
+    safe.labelFiltersEnabled =
+      safe.labelFiltersEnabled === undefined ? true : Boolean(safe.labelFiltersEnabled);
 
     // Backward compatibility with previous mode fields.
     if (safe.labelEarlyApplicantMode !== undefined && safe.requireEarlyApplicant === undefined) {
-      safe.requireEarlyApplicant = safe.labelEarlyApplicantMode === "include";
+      safe.requireEarlyApplicant = safe.labelEarlyApplicantMode === 'include';
     }
-    if (safe.labelActivelyReviewingMode !== undefined && safe.requireActivelyReviewing === undefined) {
-      safe.requireActivelyReviewing = safe.labelActivelyReviewingMode === "include";
+    if (
+      safe.labelActivelyReviewingMode !== undefined &&
+      safe.requireActivelyReviewing === undefined
+    ) {
+      safe.requireActivelyReviewing = safe.labelActivelyReviewingMode === 'include';
     }
     if (safe.labelPromotedMode !== undefined && safe.hidePromoted === undefined) {
-      safe.hidePromoted = safe.labelPromotedMode !== "include";
+      safe.hidePromoted = safe.labelPromotedMode !== 'include';
     }
     if (safe.labelWorksHereMode !== undefined && safe.hideWorksHere === undefined) {
-      safe.hideWorksHere = safe.labelWorksHereMode === "exclude";
+      safe.hideWorksHere = safe.labelWorksHereMode === 'exclude';
     }
 
     safe.requireEarlyApplicant = Boolean(safe.requireEarlyApplicant);
@@ -85,10 +91,11 @@
     safe.debugMode = Boolean(safe.debugMode);
 
     const postedHours = sanitizeNumber(safe.maxPostedHours, true);
-    safe.maxPostedHours = Number.isFinite(postedHours) && postedHours > 0 ? Math.floor(postedHours) : null;
+    safe.maxPostedHours =
+      Number.isFinite(postedHours) && postedHours > 0 ? Math.floor(postedHours) : null;
     safe.applyPostedHoursToUrl = Boolean(safe.applyPostedHoursToUrl);
 
-    safe.filterMode = safe.filterMode === "dim" ? "dim" : "hide";
+    safe.filterMode = safe.filterMode === 'dim' ? 'dim' : 'hide';
 
     return safe;
   }
@@ -144,4 +151,4 @@
   };
 
   globalScope[SHARED_NAMESPACE] = shared;
-})(typeof self !== "undefined" ? self : window);
+})(typeof self !== 'undefined' ? self : window);
